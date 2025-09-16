@@ -1,0 +1,35 @@
+import sqlite3
+
+# Connect to SQLite database (creates file if it doesn't exist)
+conn = sqlite3.connect('argo_data.db')
+c = conn.cursor()
+
+# Create table
+c.execute('''
+CREATE TABLE IF NOT EXISTS argo_profiles (
+    id INTEGER PRIMARY KEY,
+    float_id TEXT,
+    latitude REAL,
+    longitude REAL,
+    depth REAL,
+    temperature REAL,
+    salinity REAL,
+    date TEXT
+)
+''')
+
+# Insert sample data
+sample_data = [
+    ('A001', 0.5, 45.0, 10, 28.5, 35.0, '2023-03-10'),
+    ('A002', -1.0, 50.0, 50, 26.0, 34.8, '2023-03-12'),
+    ('A003', 0.2, 47.0, 100, 24.5, 34.9, '2023-03-15')
+]
+
+c.executemany('''
+INSERT INTO argo_profiles (float_id, latitude, longitude, depth, temperature, salinity, date)
+VALUES (?, ?, ?, ?, ?, ?, ?)
+''', sample_data)
+
+conn.commit()
+conn.close()
+print("Database created and sample data inserted!")
